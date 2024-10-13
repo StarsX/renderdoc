@@ -132,6 +132,8 @@ struct CaptureSettings
 :type: str
 )");
   rdcstr commandLine;
+  DOCUMENT("The process name which do not want to hook in.")
+  rdcstr blacklist;
   DOCUMENT(R"(The environment changes to apply.
 
 :type: List[renderdoc.EnvironmentModification]
