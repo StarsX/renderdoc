@@ -2151,6 +2151,10 @@ void RenderDoc::EnableVendorExtensions(VendorExtensions ext)
 void RenderDoc::SetCaptureOptions(const CaptureOptions &opts)
 {
   m_Options = opts;
+  RDCDEBUG("SetCaptureOptions Now");
+  //RDCDEBUG("opts.enableBlacklist : %s", opts.enableBlacklist); 
+  //RDCDEBUG("opts.captureCallstacks : %s", opts.captureCallstacks);
+  //RDCDEBUG("opts.hookIntoChildren : %s", opts.hookIntoChildren);
 
   LibraryHooks::OptionsUpdated();
 }
