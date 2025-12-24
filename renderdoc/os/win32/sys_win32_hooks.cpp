@@ -344,10 +344,12 @@ private:
           blacklist.push_back(strlower(black.trimmed()));
       }
     }
+#if (ENABLED(RDOC_DEVEL) || ENABLED(FORCE_DEBUG_LOGS)) && DISABLED(STRIP_DEBUG_LOGS)
     for(const rdcstr &black : blacklist)
     {
       RDCDEBUG("Blacklist: %s", black.c_str());
     }
+#endif
 
     bool inject = true;
 
