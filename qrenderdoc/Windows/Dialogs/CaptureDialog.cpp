@@ -1,7 +1,7 @@
 /******************************************************************************
  * The MIT License (MIT)
  *
- * Copyright (c) 2019-2024 Baldur Karlsson
+ * Copyright (c) 2016-2026 Baldur Karlsson
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -981,7 +981,7 @@ CaptureSettings CaptureDialog::Settings()
 
   ret.executable = ui->exePath->text();
   ret.workingDir = ui->workDirPath->text();
-  ret.commandLine = ui->cmdline->text();
+  ret.commandLine = GetCommandLine();
   ret.blacklist = ui->blacklist->text();
 
   ret.environment = m_EnvModifications;
@@ -1099,6 +1099,13 @@ void CaptureDialog::SetWorkingDirectory(const rdcstr &dir)
 void CaptureDialog::SetCommandLine(const rdcstr &cmd)
 {
   ui->cmdline->setText(cmd);
+}
+
+QString CaptureDialog::GetCommandLine()
+{
+  return ui->cmdline->text()
+      .replace(QLatin1Char('\n'), QLatin1Char(' '))
+      .replace(QLatin1Char('\r'), QLatin1Char(' '));
 }
 
 void CaptureDialog::LoadSettings(const rdcstr &filename)
@@ -1234,20 +1241,21 @@ void CaptureDialog::TriggerCapture()
       }
     }
 
-    QString workingDir;
+    QString workingDir = ui->workDirPath->text();
 
     // for non-remote captures, check the directory locally
-    if(m_Ctx.Replay().CurrentRemote().IsValid())
+    if(!m_Ctx.Replay().CurrentRemote().IsValid())
     {
-      workingDir = ui->workDirPath->text();
+      if(!QDir(ui->workDirPath->text()).exists())
+      {
+        RDDialog::critical(
+            this, tr("Invalid working directory"),
+            tr("Invalid working directory: %1\nThis path does not exist").arg(workingDir));
+      return;
     }
-    else
-    {
-      if(QDir(ui->workDirPath->text()).exists())
-        workingDir = ui->workDirPath->text();
     }
 
-    QString cmdLine = ui->cmdline->text();
+    QString cmdLine = GetCommandLine();
 
     SaveSettings(mostRecentFilename());
 
